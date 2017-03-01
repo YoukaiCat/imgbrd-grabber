@@ -523,10 +523,11 @@ QString Filename::optionedValue(QString res, QString key, QString ops, const Ima
 			{ excluded = options["excludenamespace"].split(' '); }
 
 			QStringList namespaced;
+			QString namespaceSeparator = settings->value("namespace_separator", ":").toString();
 			for (int i = 0; i < vals.count(); ++i)
 			{
 				QString nspace = key == "all" ? namespaces[i] : key;
-				namespaced.append((!excluded.contains(nspace) ? nspace + ":" : "") + vals[i]);
+				namespaced.append((!excluded.contains(nspace) ? nspace + namespaceSeparator : "") + vals[i]);
 			}
 			vals = namespaced;
 		}

@@ -97,6 +97,17 @@ class Image : public QObject
 		QUrl		getDisplayableUrl() const;
 		bool		isVideo() const;
 		void		setTags(QList<Tag> tags);
+#ifdef ENABLE_XATTR
+		enum class XattrMode { CREATE, REPLACE };
+		QMap<QString,QString> getXattrs() const;
+		void		writeXattrsIfEnabled(XattrMode mode = XattrMode::CREATE) const;
+		static void	writeXattrsIfEnabled(const Image * image, bool basic,
+										 const QString path, XattrMode mode = XattrMode::CREATE);
+		static void	writeXattrs(const QMap<QString,QString> xattrs,
+								const QString path, XattrMode mode = XattrMode::CREATE);
+		static void	setxattr(const QString path, QString name, const QString value);
+		static void	removexattr(const QString path, QString name);
+#endif
 
 	public slots:
 		void loadPreview();

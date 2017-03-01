@@ -3,10 +3,11 @@
 #include "rename-existing-2.h"
 #include "ui_rename-existing-2.h"
 #include "functions.h"
+#include "models/image.h"
 
 
 
-RenameExisting2::RenameExisting2(QList<QPair<QString,QString>> details, QString folder, QWidget *parent) : QDialog(parent), ui(new Ui::RenameExisting2), m_details(details), m_folder(folder)
+RenameExisting2::RenameExisting2(QList<ImageRenamingData> details, QString folder, QWidget *parent) : QDialog(parent), ui(new Ui::RenameExisting2), m_details(details), m_folder(folder)
 {
 	ui->setupUi(this);
 
@@ -14,7 +15,7 @@ RenameExisting2::RenameExisting2(QList<QPair<QString,QString>> details, QString 
 
 	int i = 0;
 	ui->tableWidget->setRowCount(m_details.size());
-	for (QPair<QString,QString> image : m_details)
+	for (ImageRenamingData image : m_details)
 	{
 		if (thumbnails)
 		{
@@ -68,7 +69,7 @@ void RenameExisting2::deleteDir(QString path)
 void RenameExisting2::on_buttonOk_clicked()
 {
 	// Move all images
-	for (QPair<QString,QString> images : m_details)
+	for (ImageRenamingData images : m_details)
 	{
 		// Create hierarchy
 		QString path = images.second.left(images.second.lastIndexOf(QDir::toNativeSeparators("/")));
@@ -79,6 +80,10 @@ void RenameExisting2::on_buttonOk_clicked()
 			if (!dir.mkpath(path))
 			{ log("Could not create destination directory", Logger::Error); }
 		}
+#ifdef ENABLE_XATTR
+		if (images.first.size() > 0 && images.xattrs.size() > 0)
+			Image::writeXattrs(images.xattrs, images.first, Image::XattrMode::REPLACE);
+#endif
 
 		// Move file
 		QFile(images.first).rename(images.second);

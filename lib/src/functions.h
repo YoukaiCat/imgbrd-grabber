@@ -56,6 +56,9 @@ QMap<QString,QString>		domToMap(QDomElement);
 QMap<QString,QStringList>	getCustoms(QSettings *settings);
 QMap<QString,QPair<QString,QString>>	getFilenames(QSettings *settings);
 
+#ifdef ENABLE_XATTR
+QMap<QString,QStringList>	getAttributes(QSettings *settings);
+#endif
 
 
 template <typename T>

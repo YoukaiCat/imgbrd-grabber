@@ -911,12 +911,18 @@ Image::SaveResult Image::save(QString path, bool force, bool basic, bool addMd5)
 					}
 				}
 			}
+#ifdef ENABLE_XATTR
+			writeXattrsIfEnabled(this, basic, path);
+#endif
 		}
 		else if (whatToDo == "copy")
 		{
 			log(QString("Copy from <a href=\"file:///%1\">%1</a> to <a href=\"file:///%2\">%2</a>").arg(md5Duplicate).arg(path));
 			QFile::copy(md5Duplicate, path);
 
+#ifdef ENABLE_XATTR
+			writeXattrsIfEnabled(this, basic, path);
+#endif
 			res = SaveResult::Copied;
 		}
 		else if (whatToDo == "move")
@@ -925,6 +931,9 @@ Image::SaveResult Image::save(QString path, bool force, bool basic, bool addMd5)
 			QFile::rename(md5Duplicate, path);
 			m_profile->setMd5(md5(), path);
 
+#ifdef ENABLE_XATTR
+			writeXattrsIfEnabled(this, basic, path, XattrMode::REPLACE);
+#endif
 			res = SaveResult::Moved;
 		}
 		else
@@ -1198,3 +1207,64 @@ bool Image::isVideo() const
 	QString ext = getExtension(m_url);
 	return ext == "mp4" || ext == "webm";
 }
+
+#ifdef ENABLE_XATTR
+#include <sys/xattr.h>
+QMap<QString,QString> Image::getXattrs() const
+{
+	QSettings * settings = this->m_profile->getSettings();
+	QMap<QString,QStringList> required_attributes = getAttributes(settings);
+	QMap<QString,QString> attributes;
+	for (auto required_name : required_attributes.keys())
+	{
+		QString required_value = required_attributes.value(required_name).join(" ");
+		QString value = this->path(required_value, "", 1, true, true, false, false, false).at(0);
+		if (!value.isEmpty())
+			attributes.insert(required_name, value);
+	}
+	return attributes;
+}
+
+void Image::writeXattrsIfEnabled(XattrMode mode) const
+{
+	Image::writeXattrsIfEnabled(this, false, this->path("", "", 0, false, false, true, false, true).at(0), mode);
+}
+
+void Image::writeXattrsIfEnabled(const Image * image, bool basic, const QString path, XattrMode mode)
+{
+	QSettings * settings = image->m_profile->getSettings();
+	if (settings->value("Xattr/activate", false).toBool() && !basic)
+		Image::writeXattrs(image->getXattrs(), path, mode);
+}
+
+void Image::writeXattrs(const QMap<QString,QString> xattrs, const QString path, XattrMode mode)
+{
+	for (auto name : xattrs.keys())
+	{
+		if (mode == XattrMode::REPLACE)
+			removexattr(path, name);
+		setxattr(path, name, xattrs.value(name));
+	}
+}
+
+void Image::setxattr(const QString path, QString name, const QString value)
+{
+	const char * cpath = path.toUtf8().constData();
+	name = (name.size() > 0) ? QString("user.%1").arg(name) : QString("user.defaultname");
+	const char * cname = name.toUtf8().constData();
+	QByteArray bvalue = value.toUtf8();
+	const char * cvalue = bvalue.constData();
+	int failure = ::setxattr(cpath, cname, cvalue, bvalue.size(), XATTR_CREATE);
+	if (failure) {
+		log(QString("Can't set attribute %1 for file %2. Value: %3").arg(name, path, value));
+	}
+}
+
+void Image::removexattr(const QString path, QString name)
+{
+	const char * cpath = path.toUtf8().constData();
+	name = (name.size() > 0) ? QString("user.%1").arg(name) : QString("user.defaultname");
+	const char * cname = name.toUtf8().constData();
+	::removexattr(cpath, cname);
+}
+#endif

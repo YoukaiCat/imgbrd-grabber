@@ -5,6 +5,7 @@
 #include <QMap>
 #include "models/site.h"
 #include "models/filename.h"
+#include "image-renaming-data.h"
 
 
 
@@ -36,7 +37,7 @@ class RenameExisting1 : public QDialog
 		bool									m_needDetails;
 		QList<QMap<QString, QString>>			m_details;
 		QList<QSharedPointer<Image>>			m_getTags;
-		QMap<QString, QPair<QString, QString>>	m_getAll;
+		QMap<QString, ImageRenamingData>		m_getAll;
 };
 
 #endif // RENAME_EXISTING_1_H

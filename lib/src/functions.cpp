@@ -81,6 +81,19 @@ QMap<QString,QPair<QString,QString>> getFilenames(QSettings *settings)
 	return tokens;
 }
 
+#ifdef ENABLE_XATTR
+QMap<QString,QStringList>	getAttributes(QSettings *settings)
+{
+	QMap<QString,QStringList> tokens;
+	settings->beginGroup("Xattr/Attributes");
+	QStringList keys = settings->childKeys();
+	for (int i = 0; i < keys.size(); i++)
+	{ tokens.insert(keys.at(i), settings->value(keys.at(i)).toString().split(' ')); }
+	settings->endGroup();
+	return tokens;
+}
+#endif
+
 /**
  * Convert a danbooru-like date (Sat May 14 17:38:04 -0400 2011) to a valid QDateTime.
  * @param	str				The date string.

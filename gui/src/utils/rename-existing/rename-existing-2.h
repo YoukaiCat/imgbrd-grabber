@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QLabel>
+#include "image-renaming-data.h"
 
 
 
@@ -18,7 +19,7 @@ class RenameExisting2 : public QDialog
 	Q_OBJECT
 
 	public:
-		explicit RenameExisting2(QList<QPair<QString,QString>> details, QString folder, QWidget *parent = 0);
+		explicit RenameExisting2(QList<ImageRenamingData> details, QString folder, QWidget *parent = 0);
 		~RenameExisting2();
 		void deleteDir(QString path);
 
@@ -28,7 +29,7 @@ class RenameExisting2 : public QDialog
 
 	private:
 		Ui::RenameExisting2				*ui;
-		QList<QPair<QString,QString>>	m_details;
+		QList<ImageRenamingData>	m_details;
 		QList<QLabel*>					m_previews;
 		QString							m_folder;
 };

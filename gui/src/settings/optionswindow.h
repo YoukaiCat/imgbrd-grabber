@@ -66,6 +66,10 @@ class optionsWindow : public QDialog
 		void on_buttonFavoritesPlus_clicked();
 		void on_buttonCustom_clicked();
 		void addCustom(QString, QString);
+#ifdef ENABLE_XATTR
+		void on_buttonAttribute_clicked();
+		void addAttribute(QString, QString);
+#endif
 		void on_buttonFilenames_clicked();
 		void addFilename(QString, QString, QString);
 		void save();
@@ -78,6 +82,9 @@ class optionsWindow : public QDialog
 		Ui::optionsWindow *ui;
 		Profile *m_profile;
 		QList<QLineEdit*> m_customNames, m_customTags, m_filenamesConditions, m_filenamesFilenames, m_filenamesFolders;
+#ifdef ENABLE_XATTR
+		QList<QLineEdit*> m_attributeNames, m_attributeValues;
+#endif
 };
 
 #endif // OPTIONSWINDOW_H

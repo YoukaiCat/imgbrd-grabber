@@ -1469,6 +1469,11 @@ void mainWindow::getAllImages()
 			m_mustGetTags = true;
 	}
 
+#ifdef ENABLE_XATTR
+	if (m_settings->value("Xattr/activate", false).toBool())
+		m_mustGetTags = true;
+#endif
+
 	if (m_mustGetTags)
 		log("Downloading images details.");
 	else
@@ -1931,6 +1936,9 @@ void mainWindow::saveImage(QSharedPointer<Image> img, QString path, QString p, b
 							}
 						}
 					}
+#ifdef ENABLE_XATTR
+					Image::writeXattrsIfEnabled(img.data(), false, path);
+#endif
 				}
 
 				// Execute commands

@@ -123,6 +123,7 @@ optionsWindow::optionsWindow(Profile *profile, QWidget *parent)
 		ui->lineFilename->setText(settings->value("filename_real").toString());
 		ui->lineFavorites->setText(settings->value("filename_favorites").toString());
 		ui->lineSeparator->setText(settings->value("separator", " ").toString());
+		ui->namespaceSeparator->setText(settings->value("namespace_separator", ":").toString());
 		ui->checkNoJpeg->setChecked(settings->value("noJpeg", true).toBool());
 
 		ui->lineArtistsIfNone->setText(settings->value("artist_empty", "anonymous").toString());
@@ -297,6 +298,25 @@ optionsWindow::optionsWindow(Profile *profile, QWidget *parent)
 			ui->lineCommandsSqlAfter->setText(settings->value("after").toString());
 		settings->endGroup();
 	settings->endGroup();
+
+#ifdef ENABLE_XATTR
+	ui->labelXattrNotSupported->hide();
+	ui->pageSaveXattr->setEnabled(true);
+	ui->checkXattrActivate->setChecked(settings->value("Xattr/activate", false).toBool());
+
+	QMap<QString,QStringList> attributes = getAttributes(settings);
+	m_attributeNames = QList<QLineEdit*>();
+	m_attributeValues = QList<QLineEdit*>();
+	for (int i = 0; i < attributes.size(); i++)
+	{
+		QLineEdit *name = new QLineEdit(attributes.keys().at(i));
+		QLineEdit *value = new QLineEdit(attributes.values().at(i).join(" "));
+		m_attributeNames.append(name);
+		m_attributeValues.append(value);
+		ui->layoutAttributes->insertRow(i, name, value);
+	}
+#endif
+
 	connect(this, SIGNAL(accepted()), this, SLOT(save()));
 }
 
@@ -348,6 +368,22 @@ void optionsWindow::addCustom(QString name, QString tags)
 	m_customNames.append(leName);
 	m_customTags.append(leTags);
 }
+#ifdef ENABLE_XATTR
+void optionsWindow::on_buttonAttribute_clicked()
+{
+	CustomWindow *aw = new CustomWindow(this);
+	connect(aw, SIGNAL(validated(QString, QString)), this, SLOT(addAttribute(QString, QString)));
+	aw->show();
+}
+void optionsWindow::addAttribute(QString name, QString value)
+{
+	QLineEdit *aname = new QLineEdit(name);
+	QLineEdit *avalue = new QLineEdit(value);
+	ui->layoutAttributes->insertRow(m_attributeNames.size(), aname, avalue);
+	m_attributeNames.append(aname);
+	m_attributeValues.append(avalue);
+}
+#endif
 void optionsWindow::on_buttonFilenames_clicked()
 {
 	conditionWindow *cw = new conditionWindow();
@@ -574,6 +610,17 @@ void optionsWindow::save()
 		settings->setValue("content", ui->textEditTextfileContent->toPlainText());
 	settings->endGroup();
 
+#ifdef ENABLE_XATTR
+	settings->beginGroup("Xattr");
+		settings->setValue("activate", ui->checkXattrActivate->isChecked());
+		settings->beginGroup("Attributes");
+			settings->remove("");
+			for (int i = 0; i < m_attributeNames.size(); i++)
+			{ settings->setValue(m_attributeNames.at(i)->text(), m_attributeValues.at(i)->text()); }
+		settings->endGroup();
+	settings->endGroup();
+#endif
+
 	settings->beginGroup("SaveLog");
 		settings->setValue("activate", ui->checkSaveLogEnable->isChecked());
 		settings->setValue("file", ui->lineSaveLogFile->text());
@@ -589,6 +636,7 @@ void optionsWindow::save()
 		settings->setValue("keepDate", ui->checkKeepDate->isChecked());
 		settings->setValue("headerDetection", ui->checkSaveHeaderDetection->isChecked());
 		settings->setValue("separator", ui->lineSeparator->text());
+		settings->setValue("namespace_separator", ui->namespaceSeparator->text());
 		settings->setValue("noJpeg", ui->checkNoJpeg->isChecked());
 		QString folder = fixFilename("", ui->lineFolder->text());
 		settings->setValue("path", folder);

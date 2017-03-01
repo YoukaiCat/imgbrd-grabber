@@ -85,6 +85,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Extended attributes</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Separate log</string>
         </property>
        </item>
@@ -713,28 +718,28 @@
           </property>
          </widget>
         </item>
-        <item row="8" column="0" colspan="2">
+        <item row="9" column="0" colspan="2">
          <widget class="QCheckBox" name="checkReplaceBlanks">
           <property name="text">
            <string>Replace spaces by underscores</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="0">
+        <item row="11" column="0">
          <widget class="QLabel" name="label_54">
           <property name="text">
            <string>Max length</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="1">
+        <item row="11" column="1">
          <widget class="QSpinBox" name="spinLimit">
           <property name="maximum">
            <number>260</number>
           </property>
          </widget>
         </item>
-        <item row="11" column="0" colspan="2">
+        <item row="12" column="0" colspan="2">
          <widget class="QLabel" name="label_55">
           <property name="text">
            <string>&lt;i&gt;If the filename length is greater than this number, it will be shortened. Leave it to 0 to use the default limit.&lt;/i&gt;</string>
@@ -744,14 +749,14 @@
           </property>
          </widget>
         </item>
-        <item row="12" column="0">
+        <item row="13" column="0">
          <widget class="QLabel" name="label_29">
           <property name="text">
            <string>Simultaneous downloads</string>
           </property>
          </widget>
         </item>
-        <item row="12" column="1">
+        <item row="13" column="1">
          <widget class="QSpinBox" name="spinSimultaneous">
           <property name="minimum">
            <number>1</number>
@@ -761,14 +766,14 @@
           </property>
          </widget>
         </item>
-        <item row="13" column="0">
+        <item row="14" column="0">
          <widget class="QLabel" name="label_83">
           <property name="text">
            <string>When the download is finished</string>
           </property>
          </widget>
         </item>
-        <item row="13" column="1">
+        <item row="14" column="1">
          <widget class="QComboBox" name="comboBatchEnd">
           <item>
            <property name="text">
@@ -797,14 +802,14 @@
           </item>
          </widget>
         </item>
-        <item row="14" column="0">
+        <item row="15" column="0">
          <widget class="QLabel" name="label_19">
           <property name="text">
            <string>If a file already exists</string>
           </property>
          </widget>
         </item>
-        <item row="14" column="1">
+        <item row="15" column="1">
          <widget class="QComboBox" name="comboMd5Duplicates">
           <property name="currentIndex">
            <number>0</number>
@@ -831,28 +836,28 @@
           </item>
          </widget>
         </item>
-        <item row="15" column="0" colspan="2">
+        <item row="16" column="0" colspan="2">
          <widget class="QLabel" name="label_21">
           <property name="text">
            <string>&lt;i&gt;File's identity is based on the MD5 algorithm.&lt;/i&gt;</string>
           </property>
          </widget>
         </item>
-        <item row="16" column="0">
+        <item row="17" column="0">
          <widget class="QLabel" name="label_84">
           <property name="text">
            <string>Automatic redownload</string>
           </property>
          </widget>
         </item>
-        <item row="16" column="1">
+        <item row="17" column="1">
          <widget class="QSpinBox" name="spinAutomaticRetries">
           <property name="maximum">
            <number>100</number>
           </property>
          </widget>
         </item>
-        <item row="9" column="0" colspan="2">
+        <item row="10" column="0" colspan="2">
          <widget class="QCheckBox" name="checkNoJpeg">
           <property name="text">
            <string>Replace JPEG by JPG</string>
@@ -869,6 +874,16 @@
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QLineEdit" name="namespaceSeparator"/>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_89">
+          <property name="text">
+           <string>Namespace separator</string>
           </property>
          </widget>
         </item>
@@ -1012,6 +1027,71 @@
            <bool>true</bool>
           </property>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pageSaveXattr">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="labelXattrNotSupported">
+          <property name="text">
+           <string>(Extended attributes is not supported)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkXattrActivate">
+          <property name="text">
+           <string>Enable extended attributes</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_90">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Each time an image is saved, an extended attributes will be saved for the image, containing the image's tags.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QFormLayout" name="layoutAttributes">
+          <item row="0" column="0" colspan="2">
+           <widget class="QPushButton" name="buttonAttribute">
+            <property name="text">
+             <string>Add extended attribute</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_88">
+          <property name="text">
+           <string>Available tokens: the same as in the &quot;Save&quot; part.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -1360,7 +1440,7 @@
         <item row="4" column="0">
          <widget class="QRadioButton" name="radioCharactersKeepN">
           <property name="text">
-           <string>Keep n tags</string>
+           <string>&amp;Keep n tags</string>
           </property>
          </widget>
         </item>
@@ -1370,7 +1450,7 @@
         <item row="5" column="0">
          <widget class="QRadioButton" name="radioCharactersKeepNThenAdd">
           <property name="text">
-           <string>Keep n tags, then add</string>
+           <string>Keep &amp;n tags, then add</string>
           </property>
          </widget>
         </item>
@@ -1391,7 +1471,7 @@
         <item row="6" column="0">
          <widget class="QRadioButton" name="radioCharactersReplaceAll">
           <property name="text">
-           <string>Replace all tags by</string>
+           <string>&amp;Replace all tags by</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -1408,14 +1488,14 @@
         <item row="3" column="0" colspan="2">
          <widget class="QRadioButton" name="radioCharactersKeepAll">
           <property name="text">
-           <string>Keep all tags</string>
+           <string>Keep &amp;all tags</string>
           </property>
          </widget>
         </item>
         <item row="7" column="0" colspan="2">
          <widget class="QRadioButton" name="radioCharactersMultiple">
           <property name="text">
-           <string>One file per tag</string>
+           <string>&amp;One file per tag</string>
           </property>
          </widget>
         </item>

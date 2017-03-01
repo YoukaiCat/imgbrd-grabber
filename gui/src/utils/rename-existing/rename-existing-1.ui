@@ -31,14 +31,14 @@
    <item row="1" column="0" colspan="2">
     <widget class="QRadioButton" name="radioForce">
      <property name="text">
-      <string>Force md5 calculation</string>
+      <string>&amp;Force md5 calculation</string>
      </property>
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QRadioButton" name="radioFilename">
      <property name="text">
-      <string>Get md5 in filename</string>
+      <string>&amp;Get md5 in filename</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -75,7 +75,7 @@
    <item row="5" column="1">
     <widget class="QComboBox" name="comboSource"/>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="7" column="0" colspan="2">
     <widget class="QProgressBar" name="progressBar">
      <property name="enabled">
       <bool>true</bool>
@@ -85,7 +85,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <layout class="QHBoxLayout" name="layoutButtons">
      <item>
       <spacer name="horizontalSpacer">
@@ -115,6 +115,16 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="6" column="0">
+    <widget class="QCheckBox" name="checkBoxUpdateXattrs">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Update xattrs</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

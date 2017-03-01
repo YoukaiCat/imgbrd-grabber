@@ -374,6 +374,9 @@ void Downloader::finishedLoadingImage()
 				f.close();
 				log(QString("Saved to '%1'").arg(path));
 			}
+#ifdef ENABLE_XATTR
+		Image::writeXattrsIfEnabled(image.data(), false, path);
+#endif
 		}
 	}
 	else

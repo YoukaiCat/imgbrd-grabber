@@ -22,6 +22,14 @@ RenameExisting1::RenameExisting1(Profile *profile, QMap<QString,Site*> sites, QW
 	ui->comboSource->addItems(m_sites.keys());
 	ui->progressBar->hide();
 
+#ifdef ENABLE_XATTR
+	bool xattrEnabled = m_profile->getSettings()->value("Xattr/activate", false).toBool();
+	ui->checkBoxUpdateXattrs->setEnabled(xattrEnabled);
+	ui->checkBoxUpdateXattrs->setChecked(xattrEnabled);
+#else
+	ui->checkBoxUpdateXattrs->hide();
+#endif
+
 	resize(size().width(), 0);
 }
 
@@ -118,7 +126,11 @@ void RenameExisting1::on_buttonContinue_clicked()
 
 	// Check if filename requires details
 	m_filename.setFormat(ui->lineFilenameDestination->text());
-	m_needDetails = m_filename.needExactTags(m_sites.value(ui->comboSource->currentText()));
+	if (ui->checkBoxUpdateXattrs->isChecked()) {
+		m_needDetails = true; //force download tags
+	} else {
+		m_needDetails = m_filename.needExactTags(m_sites.value(ui->comboSource->currentText()));
+	}
 
 	int reponse = QMessageBox::question(this, tr("Rename existing images"), tr("You are about to download information from %n image(s). Are you sure you want to continue?", "", m_details.size()), QMessageBox::Yes | QMessageBox::No);
 	if (reponse == QMessageBox::Yes)
@@ -150,6 +162,10 @@ void RenameExisting1::getAll(Page *p)
 		{
 			m_getAll[img->md5()].second = img->path(ui->lineFilenameDestination->text(), ui->lineFolder->text(), 0, true, false, true, true, true).first();
 			ui->progressBar->setValue(ui->progressBar->value() + 1);
+#ifdef ENABLE_XATTR
+			if (ui->checkBoxUpdateXattrs->isChecked())
+				m_getAll[img->md5()].xattrs = img->getXattrs();
+#endif
 		}
 	}
 	else
@@ -166,6 +182,10 @@ void RenameExisting1::getTags()
 
 	m_getAll[img->md5()].second = img->path(ui->lineFilenameDestination->text(), ui->lineFolder->text(), 0, true, false, true, true, true).first();
 	ui->progressBar->setValue(ui->progressBar->value() + 1);
+#ifdef ENABLE_XATTR
+	if (ui->checkBoxUpdateXattrs->isChecked())
+		m_getAll[img->md5()].xattrs = img->getXattrs();
+#endif
 
 	loadNext();
 }
@@ -175,7 +195,12 @@ void RenameExisting1::loadNext()
 	if (!m_details.isEmpty())
 	{
 		QMap<QString,QString> det = m_details.takeFirst();
-		m_getAll.insert(det.value("md5"), QPair<QString,QString>(det.value("path_full"), ""));
+#ifdef ENABLE_XATTR
+		ImageRenamingData data = { det.value("path_full"), "", QMap<QString,QString>() };
+#else
+		ImageRenamingData data = { det.value("path_full"), "" };
+#endif
+		m_getAll.insert(det.value("md5"), data);
 
 		Page *page = new Page(m_profile, m_sites.value(ui->comboSource->currentText()), m_sites.values(), QStringList("md5:" + det.value("md5")), 1, 1);
 		connect(page, &Page::finishedLoading, this, &RenameExisting1::getAll);
